@@ -69,3 +69,71 @@
         }),
       ]
     ```
+    * 注意，这里的 `HtmlWebpackPlugin` 可以调用多次，但是要定义 `filename` 来区分，如果要分别引入 js 文件的话还要加上 `chunks` 属性。
+    ```js
+    // 插件， 数组形式
+      plugins: [
+        // new HtmlWebpackPlugin(),
+        // 下面可以来带上配置
+        new HtmlWebpackPlugin({
+          // 要指定不同的 js 到不同的文件，要使用 chunks
+          // 这里要写的名字是 entry 中 的 key
+          chunks: ['index'],
+          title: 'I Love China',
+          // 这里是指所用的模板
+          template: './src/index.html',
+          // 这里是指要输出的文件，默认的是 index.html
+          filename: 'login.html',
+        }),
+        // 这里想要生成多个页面的时候, 必须要声明多次, 并且要定义 filename 来区别多个页面
+        new HtmlWebpackPlugin({
+          chunks: ['index2'],
+          title: 'Li Bai',
+          template: './src/index2.html',
+          filename: 'index2.html',
+        }),
+      ]
+    ```
+    
+8. clean-webpack-plugin: 删除某些东西
+    * npm i clean-webpack-plugin -D 然后引入
+    * 配置： 文件夹的名字用数组形式放入即可 `new CleanWebpackPlugin(['dist'])`
+    
+9. devServer
+    * npm i webpack-dev-server -D
+    * 不需要引入，直接使用
+    ```js
+    devServer: {
+        // 访问的基本目录
+        contentBase: path.resolve(__dirname, 'dist'),
+        // 服务器的 IP 地址
+        host: 'localhost',
+        // 设置端口
+        port: 8090,
+        open: true, // 自动打开浏览器
+        hot: true, // 热更新，但是必须确保 hot module replacement 打开
+      },
+      // 插件， 数组形式
+      plugins: [
+        new CleanWebpackPlugin(['dist']),
+        // new HtmlWebpackPlugin(),
+        // 下面可以来带上配置
+        new HtmlWebpackPlugin({
+          // 要指定不同的 js 到不同的文件，要使用 chunks
+          // 这里要写的名字是 entry 中 的 key
+          chunks: ['index'],
+          title: 'I Love China',
+          // 这里是指所用的模板
+          template: './src/index.html',
+          // 这里是指要输出的文件，默认的是 index.html
+          filename: 'index.html',
+        }),
+      ]
+    ```
+    * 这里有一个问题要注意的是，如果我们这样配置，当服务器起来之后，dist 实际上还没打包出来，但是如果你没有更改 `HtmlWebpackPlugin` 默认输出的文件，即`filename: 'index.html'` 实际上还是可以访问的，因为他会有缓存
+    * 如果想自动打开浏览器：可以添加一个配置 `open: true` 或者在 命令中加 `--open`
+    * 开启热更新，设置 `hot: true` 但是要确保开启 `HotModuleReplacementPlugin` 是开启的，这个开启很简单。
+    ```js
+    const webpack = require('webpack');
+    new webpack.HotModuleReplacementPlugin();
+    ```
