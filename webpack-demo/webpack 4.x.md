@@ -137,3 +137,60 @@
     const webpack = require('webpack');
     new webpack.HotModuleReplacementPlugin();
     ```
+10. loaders: 加载器，转化器
+    * less/sass, es6, jsx
+    * 完整的配置：
+    
+    ```js
+    module: {
+        rules: [
+          {
+            test: /\.css$/,
+            use: [
+              { loader: 'style-loader' },
+              {
+                loader: 'css-loader',
+                options: {
+                  modules: true
+                }
+              }
+            ]
+          }
+        ]
+    }
+    // loader 可以有三种版本：
+    // use: ['xxx-loader', 'xxx-loader']
+    // loader: ['xxx-loader', 'xxx-loader']
+    // use: [{loader: 'xxx-loader'}, {loader: 'xxx-loader'}]
+    ```
+    * 想要分离开 `css` 文件单独打包，
+    
+    ```js
+    // npm i extract-text-webpack-plugin -D
+    const ExtractTextPlugin = require('extract-text-webpack-plugin');
+    module: {
+        rules: [
+          {
+            test: /\.css$/,
+            use: ExtractTextPlugin.extract({
+              fallback: 'style-loader',
+              use: 'css-loader'
+            })
+            // [
+            //   { loader: 'style-loader' },
+            //   {
+            //     loader: 'css-loader',
+            //     options: {
+            //       modules: true
+            //     }
+            //   }
+            // ]
+          }
+        ]
+    }
+    plugins: [
+        // 最终打包进入的文件夹
+        new ExtractTextPlugin('css/index.css');
+    ]
+    ```
+    * 注意，在 `webpack 4.x` 中这么使用将会出错，应该要 `npm i extract-text-webpack-plugin@next -D`

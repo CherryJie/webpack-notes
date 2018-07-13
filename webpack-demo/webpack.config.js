@@ -2,9 +2,13 @@
 // node 系统模块
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+// const CleanWebpackPlugin = require('clean-webpack-plugin');
 const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
 module.exports = {
+  // mode 可以在此处配置
+  mode: 'development',
   // 入门配置
   // entry output 是必须的，其他的都不是
   entry: {
@@ -32,7 +36,7 @@ module.exports = {
   plugins: [
     // 开启热更新的模块
     new webpack.HotModuleReplacementPlugin(),
-    new CleanWebpackPlugin(['dist']),
+    // new CleanWebpackPlugin(['dist']),
     // new HtmlWebpackPlugin(),
     // 下面可以来带上配置
     new HtmlWebpackPlugin({
@@ -45,6 +49,7 @@ module.exports = {
       // 这里是指要输出的文件，默认的是 index.html
       filename: 'index.html',
     }),
+    new ExtractTextPlugin('css/index.css'),
     // 这里想要生成多个页面的时候, 必须要声明多次, 并且要定义 filename 来区别多个页面
     // new HtmlWebpackPlugin({
     //   chunks: ['index2'],
@@ -52,5 +57,25 @@ module.exports = {
     //   template: './src/index2.html',
     //   filename: 'index2.html',
     // }),
-  ]
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: 'css-loader'
+        })
+        // [
+        //   { loader: 'style-loader' },
+        //   {
+        //     loader: 'css-loader',
+        //     options: {
+        //       modules: true
+        //     }
+        //   }
+        // ]
+      }
+    ]
+  }
 };
